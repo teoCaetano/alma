@@ -109,7 +109,7 @@ void efecto3() {
   uint8_t val = 0;
   //inicializacion variables timer
   unsigned long effectTimer = millis();
-  int medioSegundo=0;
+  int medioSegundo = 0;
 
   //inicializacion variables brillo - PRUEBA
   int brillop = 5;
@@ -195,7 +195,7 @@ void efecto3() {
     //FastLED.show();
     if (millis() - effectTimer > 100) { //10
       medioSegundo++;
-      if ((enable_efectoReboteSaturacion == true) && (medioSegundo >= 5))
+      if ((enable_efectoReboteSaturacion == true) && (medioSegundo >= 7))
       {
         if ((flag_efectoReboteSaturacion == false) && (saturacion_actual >= 6))
         {
@@ -211,19 +211,12 @@ void efecto3() {
         }
         if ((flag_efectoReboteSaturacion == true) && (saturacion_actual <= 0))
         {
-          Serial.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
           enable_efectoReboteSaturacion = false;
           flag_efectoReboteSaturacion = false;
           saturacion_actual = 0;
         }
         medioSegundo = 0;
       }
-
-      Serial.print("la etapa del efecto saturacion es: ");
-      Serial.println(saturacion_actual);
-      Serial.print("el enable del efecto saturacion esta en: ");
-      Serial.println(enable_efectoReboteSaturacion);
-
       cuentaEspectro++;
       effectTimer = millis();
       if (flag_timeAfterSerial_efecto3 == false) {
@@ -242,21 +235,9 @@ void efecto3() {
     if (enable_efectoReboteSaturacion == true)
     {
       switch (saturacion_actual) {
-        case 1:
-          memoria_saturacion_10 = 250;
-          memoria_saturacion_9 = 250;
-          memoria_saturacion_8 = 250;
-          memoria_saturacion_7 = 250;
-          memoria_saturacion_6 = 250;
-          memoria_saturacion_5 = 250;
-          memoria_saturacion_4 = 250;
-          memoria_saturacion_3 = 250;
-          memoria_saturacion_2 = 10;
-          memoria_saturacion_1 = 10;
-          break;
-        case 2:
-          memoria_saturacion_10 = 90;
-          memoria_saturacion_9 = 100;
+        case 6:
+          memoria_saturacion_10 = 30;
+          memoria_saturacion_9 = 90;
           memoria_saturacion_8 = 100;
           memoria_saturacion_7 = 130;
           memoria_saturacion_6 = 150;
@@ -266,10 +247,10 @@ void efecto3() {
           memoria_saturacion_2 = 10;
           memoria_saturacion_1 = 10;
           break;
-        case 3:
+        case 5:
           memoria_saturacion_10 = 10;
           memoria_saturacion_9 = 10;
-          memoria_saturacion_8 = 20;
+          memoria_saturacion_8 = 90;
           memoria_saturacion_7 = 130;
           memoria_saturacion_6 = 150;
           memoria_saturacion_5 = 190;
@@ -282,6 +263,18 @@ void efecto3() {
           memoria_saturacion_10 = 10;
           memoria_saturacion_9 = 10;
           memoria_saturacion_8 = 20;
+          memoria_saturacion_7 = 130;
+          memoria_saturacion_6 = 150;
+          memoria_saturacion_5 = 190;
+          memoria_saturacion_4 = 220;
+          memoria_saturacion_3 = 250;
+          memoria_saturacion_2 = 10;
+          memoria_saturacion_1 = 10;
+          break;
+        case 3:
+          memoria_saturacion_10 = 10;
+          memoria_saturacion_9 = 10;
+          memoria_saturacion_8 = 20;
           memoria_saturacion_7 = 30;
           memoria_saturacion_6 = 150;
           memoria_saturacion_5 = 190;
@@ -290,7 +283,7 @@ void efecto3() {
           memoria_saturacion_2 = 10;
           memoria_saturacion_1 = 10;
           break;
-        case 5:
+        case 2:
           memoria_saturacion_10 = 10;
           memoria_saturacion_9 = 10;
           memoria_saturacion_8 = 20;
@@ -302,7 +295,7 @@ void efecto3() {
           memoria_saturacion_2 = 10;
           memoria_saturacion_1 = 10;
           break;
-        case 6:
+        case 1:
           memoria_saturacion_10 = 0;
           memoria_saturacion_9 = 0;
           memoria_saturacion_8 = 0;
@@ -327,7 +320,7 @@ void efecto3() {
       int v = lienzoHSV2[n][2];
 
       if (cuentaEfecto3 == 0) {
-        lienzoHSV2[n][0] = lienzoHSV2[n][0] + random(0, 1);
+        lienzoHSV2[n][0] = lienzoHSV2[n][0] + 1;
         int Radio = valorRadialLeds[n];
         switch (Radio) {
           case 10:
@@ -371,7 +364,7 @@ void efecto3() {
       }
       else if (h < cuentaEfecto3 || h > cuentaEfecto3 + 3)
       {
-        lienzoHSV2[n][0] = lienzoHSV2[n][0] + random(0, 3);
+        lienzoHSV2[n][0] = lienzoHSV2[n][0] + 1;
         int Radio = valorRadialLeds[n];
         switch (Radio) {
           case 10:
@@ -502,27 +495,28 @@ void efecto3() {
     }
     //sp es la velocidad global
     delay (sp * 10);
-    /* if(bandera_brillo == false)
-       {
-         brillop=brillop+1;
-       }
-       if(brillop>=180)
-       {
-         bandera_brillo = true;
-       }
-       if(bandera_brillo == true)
-       {
-         brillop=brillop-1;
-       }
-       if(brillop<=30)
-       {
-         bandera_brillo = false;
-       }
-
-       newBr=brillop;
-    */
+    if (enable_efectoSonrisa == true)
+    {
+      if (bandera_brillo == false)
+      {
+        brillop = brillop + 3;
+      }
+      if (brillop >= 180 && (bandera_brillo == false))
+      {
+        bandera_brillo = true;
+      }
+      if (bandera_brillo == true)
+      {
+        brillop = brillop - 3;
+      }
+      if ((brillop <= 70) && (bandera_brillo == true))
+      {
+        enable_efectoSonrisa = false;
+        bandera_brillo = false;
+      }
+      newBr = brillop;
+    }
     serialCheck();
-
   }
 }
 

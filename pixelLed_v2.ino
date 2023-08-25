@@ -36,35 +36,39 @@ int color = 0;
 int cuentaEfecto3 = 0;
 int cuentaEspectro = 0;
 int espectroHueEfecto3 = 220;
-bool flag_timeAfterSerial_efecto3 = true;
+
 
 //variables cambio dinamico saturacion
 uint8_t saturacion_actual = 0;
 uint8_t saturacion_anterior = 0;
+
+//variables efectos
 bool enable_efectoReboteSaturacion = false;
 bool flag_efectoReboteSaturacion = false;
+bool enable_efectoSonrisa = false;
+bool flag_timeAfterSerial_efecto3 = true;
 
 //valor de saturacion inicial de cada capa(son las variables que se escribemn)
 uint8_t saturacion_10 = 10;
-uint8_t saturacion_9 = 10;
-uint8_t saturacion_8 = 40;
-uint8_t saturacion_7 = 50;
-uint8_t saturacion_6 = 70;
-uint8_t saturacion_5 = 100;
-uint8_t saturacion_4 = 120;
-uint8_t saturacion_3 = 140;
+uint8_t saturacion_9 = 70;
+uint8_t saturacion_8 = 100;
+uint8_t saturacion_7 = 130;
+uint8_t saturacion_6 = 170;
+uint8_t saturacion_5 = 200;
+uint8_t saturacion_4 = 220;
+uint8_t saturacion_3 = 250;
 uint8_t saturacion_2 = 250;
 uint8_t saturacion_1 = 250;
 
 //inicializo las "memorias" son valores que establezco contra los cuales comparo
 uint8_t memoria_saturacion_10 = 10;
-uint8_t memoria_saturacion_9 = 10;
-uint8_t memoria_saturacion_8 = 40;
-uint8_t memoria_saturacion_7 = 50;
-uint8_t memoria_saturacion_6 = 70;
-uint8_t memoria_saturacion_5 = 100;
-uint8_t memoria_saturacion_4 = 120;
-uint8_t memoria_saturacion_3 = 140;
+uint8_t memoria_saturacion_9 = 70;
+uint8_t memoria_saturacion_8 = 100;
+uint8_t memoria_saturacion_7 = 130;
+uint8_t memoria_saturacion_6 = 170;
+uint8_t memoria_saturacion_5 = 200;
+uint8_t memoria_saturacion_4 = 220;
+uint8_t memoria_saturacion_3 = 250;
 uint8_t memoria_saturacion_2 = 250;
 uint8_t memoria_saturacion_1 = 250;
 
@@ -250,17 +254,7 @@ void serialCheck() {
       enable_efectoReboteSaturacion = true;
     }
     else if (ch == 'y') {
-      saturacion_actual = 2;
-      memoria_saturacion_10 = 90;
-      memoria_saturacion_9 = 100;
-      memoria_saturacion_8 = 100;
-      memoria_saturacion_7 = 130;
-      memoria_saturacion_6 = 150;
-      memoria_saturacion_5 = 190;
-      memoria_saturacion_4 = 220;
-      memoria_saturacion_3 = 250;
-      memoria_saturacion_2 = 10;
-      memoria_saturacion_1 = 10;
+      enable_efectoSonrisa = true;
     }
     else if (ch == 'u') {
       saturacion_actual = 3;
