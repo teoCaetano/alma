@@ -45,18 +45,38 @@ uint8_t contadorSaturacionColores = 0;
 uint8_t cantidadColorAumentado = 4;
 
 //variables efectos
-bool enable_efectoReboteSaturacion = false;
+bool on_efectoReboteSaturacion = false;
 bool flag_efectoReboteSaturacion = false;
-bool enable_efectoSonrisa = false;
+bool on_efectoSonrisa = false;
 bool flag_timeAfterSerial_efecto3 = false;
 
 //variables timer efectos
 bool tiempoEsperaEfectos = false;
 int cuentaEsperaEfectos = 0;
+int cuentaEsperaColor = 0;
+
+//Variables Maquida de estados
 bool colorPrecionado = false;
 bool rebotePrecionado = false;
 bool sonrisaPrecionado = false;
-    
+bool enable_efectoSonrisa = false;
+bool enable_efectoReboteSaturacion = false;
+bool enable_efectoColor = false;
+
+enum maquinaEstadoEfectos {
+  estadoInicial,
+  estadoColor,
+  timerColor,
+  estadoRebote,
+  timerRebote,
+  estadoSonrisa,
+  timerSonrisa
+};
+
+maquinaEstadoEfectos maquina = estadoInicial;
+
+unsigned int relojMaquinaEstadosEfectos = 0;
+int cuenta_relojMaquinaEstadosEfectos = 0;
 
 //valor de saturacion inicial de cada capa(son las variables que se escribemn)
 uint8_t saturacion_10 = 10;
@@ -262,39 +282,19 @@ void serialCheck() {
       subirColor();
     else if (ch == 's')
       bajarColor();
-    else if (ch == 't') {
-      enable_efectoReboteSaturacion = true;
+    else if ((ch == 't') && (enable_efectoReboteSaturacion == true)) {
+      on_efectoReboteSaturacion = true;
       rebotePrecionado = true;
     }
-    else if (ch == 'y') {
-      enable_efectoSonrisa = true;
+    else if ((ch == 'y') && (enable_efectoSonrisa == true)) {
+      on_efectoSonrisa = true;
       sonrisaPrecionado = true;
     }
     else if (ch == 'u') {
-      saturacion_actual = 3;
-      memoria_saturacion_10 = 10;
-      memoria_saturacion_9 = 10;
-      memoria_saturacion_8 = 20;
-      memoria_saturacion_7 = 130;
-      memoria_saturacion_6 = 150;
-      memoria_saturacion_5 = 190;
-      memoria_saturacion_4 = 220;
-      memoria_saturacion_3 = 250;
-      memoria_saturacion_2 = 10;
-      memoria_saturacion_1 = 10;
+      on_efectoReboteSaturacion = true;
     }
     else if (ch == 'i') {
-      saturacion_actual = 4;
-      memoria_saturacion_10 = 10;
-      memoria_saturacion_9 = 10;
-      memoria_saturacion_8 = 20;
-      memoria_saturacion_7 = 30;
-      memoria_saturacion_6 = 150;
-      memoria_saturacion_5 = 190;
-      memoria_saturacion_4 = 220;
-      memoria_saturacion_3 = 250;
-      memoria_saturacion_2 = 10;
-      memoria_saturacion_1 = 10;
+      on_efectoSonrisa = true;
     }
     else if (ch == 'o') {
       saturacion_actual = 5;
@@ -310,69 +310,65 @@ void serialCheck() {
       memoria_saturacion_1 = 10;
     }
     else if (ch == 'p') {
-      saturacion_actual = 6;
-      memoria_saturacion_10 = 0;
-      memoria_saturacion_9 = 0;
-      memoria_saturacion_8 = 0;
-      memoria_saturacion_7 = 0;
-      memoria_saturacion_6 = 0;
-      memoria_saturacion_5 = 0;
-      memoria_saturacion_4 = 0;
-      memoria_saturacion_3 = 0;
-      memoria_saturacion_2 = 10;
-      memoria_saturacion_1 = 10;
-    }
-    else if (ch == 'Z') {
       cuentaEfecto3 = HUE_RED;
       Serial.println("rojo");
       cuentaEspectro = 0;
       contadorSaturacionColores = 0;
       flag_timeAfterSerial_efecto3 = true;
       colorPrecionado = true;
-      cantidadColorAumentado = 4;
+      cantidadColorAumentado = 2;
     }
-    else if (ch == 'Y') {
+    else if ((ch == 'Z') && (enable_efectoColor == true)) {
+      cuentaEfecto3 = HUE_RED;
+      Serial.println("rojo");
+      cuentaEspectro = 0;
+      contadorSaturacionColores = 0;
+      flag_timeAfterSerial_efecto3 = true;
+      colorPrecionado = true;
+      cantidadColorAumentado = 2;
+    }
+    else if ((ch == 'Y') && (enable_efectoColor == true)) {
       cuentaEfecto3 = HUE_ORANGE;
       Serial.println("naranja");
       cuentaEspectro = 0;
       contadorSaturacionColores = 0;
       flag_timeAfterSerial_efecto3 = true;
       colorPrecionado = true;
-      cantidadColorAumentado = 8;
+      cantidadColorAumentado = 5;
     }
-    else if (ch == 'X') {
+    else if ((ch == 'X') && (enable_efectoColor == true)) {
       cuentaEfecto3 = HUE_YELLOW ;
       Serial.println("amarillo");
       cuentaEspectro = 0;
       contadorSaturacionColores = 0;
       flag_timeAfterSerial_efecto3 = true;
       colorPrecionado = true;
-      cantidadColorAumentado = 8;
+      cantidadColorAumentado = 5;
     }
-    else if (ch == 'W') {
+    else if ((ch == 'W') && (enable_efectoColor == true)) {
       cuentaEfecto3 = HUE_GREEN ;
       Serial.println("verde");
       cuentaEspectro = 0;
       contadorSaturacionColores = 0;
       flag_timeAfterSerial_efecto3 = true;
       colorPrecionado = true;
-      cantidadColorAumentado = 4;
+      cantidadColorAumentado = 2;
     }
-    else if (ch == 'V') {
+    else if ((ch == 'V') && (enable_efectoColor == true)) {
       cuentaEfecto3 = HUE_BLUE ;
       Serial.println("azul");
       cuentaEspectro = 0;
       contadorSaturacionColores = 0;
-      cantidadColorAumentado = 4;
+      cantidadColorAumentado = 2;
       colorPrecionado = true;
       flag_timeAfterSerial_efecto3 = true;
     }
-    else if (ch == 'U') {
+    else if ((ch == 'U') && (enable_efectoColor == true)) {
       cuentaEfecto3 = HUE_PURPLE + 10 ;
       Serial.println("violeta");
       cuentaEspectro = 0;
       contadorSaturacionColores = 0;
-      cantidadColorAumentado = 4;
+      cantidadColorAumentado = 2;
       colorPrecionado = true;
       flag_timeAfterSerial_efecto3 = true;
     }

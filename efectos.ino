@@ -166,36 +166,83 @@ void efecto3() {
 
       }
     }
+    if (millis() - relojMaquinaEstadosEfectos > 1000) { //10
+
+      cuenta_relojMaquinaEstadosEfectos++;
+      relojMaquinaEstadosEfectos = millis();
+    }
+    Serial.println(cuenta_relojMaquinaEstadosEfectos);
+    if (maquina == estadoInicial)
+    {
+      enable_efectoSonrisa = false;
+      enable_efectoReboteSaturacion = false;
+      enable_efectoColor = true;
+      cuenta_relojMaquinaEstadosEfectos = 0;
+      maquina = estadoColor;
+      Serial.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    }
+    if ((maquina == estadoColor) && (colorPrecionado == true) )
+    {
+      enable_efectoColor = false;
+      cuenta_relojMaquinaEstadosEfectos = 0;
+      colorPrecionado = false;
+      maquina = timerColor;
+      Serial.println("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
+    }
+    if ((maquina == timerColor) && (cuenta_relojMaquinaEstadosEfectos > 10))
+    {
+      enable_efectoSonrisa = false;
+      enable_efectoReboteSaturacion = true;
+      enable_efectoColor = false;
+      maquina = estadoRebote;
+    }
+    if ((maquina == estadoRebote) && (rebotePrecionado == true))
+    {
+      enable_efectoReboteSaturacion = false;
+      cuenta_relojMaquinaEstadosEfectos = 0;
+      rebotePrecionado = false;
+      maquina = timerRebote;
+      Serial.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+    }
+    if ((maquina == timerRebote) && (cuenta_relojMaquinaEstadosEfectos > 10))
+    {
+      enable_efectoSonrisa = true;
+      enable_efectoReboteSaturacion = false;
+      enable_efectoColor = false;
+      maquina = estadoSonrisa;
+    }
+    if ((maquina == estadoSonrisa) && (sonrisaPrecionado == true))
+    {
+      enable_efectoSonrisa = false;
+      cuenta_relojMaquinaEstadosEfectos = 0;
+      sonrisaPrecionado = false;
+      maquina = timerSonrisa;
+      Serial.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+    }
+    if ((maquina == timerSonrisa) && (cuenta_relojMaquinaEstadosEfectos > 10))
+    {
+      enable_efectoSonrisa = false;
+      enable_efectoReboteSaturacion = false;
+      enable_efectoColor = true;
+      maquina = estadoColor;
+    }
+
+
+
     /*
       Reloj cambio color
     */
 
     //FastLED.show();
-    Serial.println(cuentaEsperaEfectos);
     if (millis() - effectTimer > 2000) { //10
 
-      //maneja el timer de cada cuanto se ejecutan los efectos
-      if (colorPrecionado == true || rebotePrecionado == true || sonrisaPrecionado == true)
-      {
-        Serial.println("xxxxxxxxxxxxxxxxxxxxx");
-        colorPrecionado = false;
-        rebotePrecionado = false;
-        sonrisaPrecionado = false;
-        tiempoEsperaEfectos = true;
-        cuentaEsperaEfectos = 0;
-      }
-      cuentaEsperaEfectos++;
-      if (cuentaEsperaEfectos >= 5)
-      {
-        tiempoEsperaEfectos = false;
-      }
       if (cuentaEfecto3 >= 249) {  //250
         cuentaEfecto3 = 0;
       }
       /*
         utilizado para efecto de color, cambio el tiempo cada cuanto cambia el color
       */
-      if ((flag_timeAfterSerial_efecto3 == false) && (enable_efectoReboteSaturacion == false)) {
+      if ((flag_timeAfterSerial_efecto3 == false) && (on_efectoReboteSaturacion == false)) {
         cuentaEfecto3 = cuentaEfecto3 + 10;
       }
       cuentaEspectro++;
@@ -213,7 +260,7 @@ void efecto3() {
     */
     if (millis() - tiempoCambioFrame > cuantoTiempoCambioFrame) { //10
       medioSegundo++;
-      if ((enable_efectoReboteSaturacion == true) && (medioSegundo >= 2))
+      if ((on_efectoReboteSaturacion == true) && (medioSegundo >= 2))
       {
         if ((flag_efectoReboteSaturacion == false) && (saturacion_actual >= 12))
         {
@@ -229,7 +276,7 @@ void efecto3() {
         }
         if ((flag_efectoReboteSaturacion == true) && (saturacion_actual <= 0))
         {
-          enable_efectoReboteSaturacion = false;
+          on_efectoReboteSaturacion = false;
           flag_efectoReboteSaturacion = false;
           saturacion_actual = 0;
         }
@@ -322,7 +369,7 @@ void efecto3() {
     }
 
     //efecto rebote
-    if (enable_efectoReboteSaturacion == true)
+    if (on_efectoReboteSaturacion == true)
     {
       switch (saturacion_actual) {
         case 12:
@@ -511,7 +558,7 @@ void efecto3() {
       */
       if (flag_timeAfterSerial_efecto3 == true)
       {
-        if (contadorSaturacionColores <= 10) {
+        if (contadorSaturacionColores <= 20) {
           for (int n = 0; n < 400; n++)
           {
             if (lienzoHSV2[n][1] <= 240)
@@ -534,7 +581,7 @@ void efecto3() {
           lienzoHSV2[n][1] = lienzoHSV[n][1];
         }
       }
-      if (enable_efectoReboteSaturacion == true) {
+      if (on_efectoReboteSaturacion == true) {
         int Radio = valorRadialLeds[n];
         switch (Radio) {
           case 10:
@@ -572,11 +619,11 @@ void efecto3() {
     }
     //sp es la velocidad global
     delay (sp * 10);
-    if (enable_efectoSonrisa == true)
+    if (on_efectoSonrisa == true)
     {
       if ((bandera_brillo == false) && (bandera_brillo_max == false))
       {
-        brillop = brillop + 6;
+        brillop = brillop + 10;
       }
       if ((brillop >= 250) && (bandera_brillo == false))
       {
@@ -587,7 +634,7 @@ void efecto3() {
       {
         if (bandera_brillo_intermedio == false)
         {
-          brillop = brillop - 5;
+          brillop = brillop - 10;
         }
         if ((brillop <= 100) && (bandera_brillo_intermedio == false))
         {
@@ -595,13 +642,13 @@ void efecto3() {
         }
         if (bandera_brillo_intermedio == true)
         {
-          brillop = brillop + 5;
+          brillop = brillop + 10;
         }
         if ((brillop >= 250) && (bandera_brillo_intermedio == true))
         {
           bandera_brillo_intermedio = false;
           cantidadRebotes++;
-          if (cantidadRebotes >= 3)
+          if (cantidadRebotes >= 2)
           {
             bandera_brillo_max = false;
             bandera_brillo = true;
@@ -612,20 +659,17 @@ void efecto3() {
       }
       if (bandera_brillo == true)
       {
-        brillop = brillop - 3;
+        brillop = brillop - 5;
       }
       if ((brillop <= BRIGHTNESS) && (bandera_brillo == true))
       {
-        enable_efectoSonrisa = false;
+        on_efectoSonrisa = false;
         bandera_brillo = false;
       }
       Serial.println(brillop);
       newBr = brillop;
     }
-    if (tiempoEsperaEfectos == false)
-    {
-      serialCheck();
-    }
+    serialCheck();
   }
 }
 
@@ -649,7 +693,7 @@ void efecto4() {
   //inicializacion variables saturacion dinamica
   int diferenciaEstadosSaturacion = 0;
   bool tipoTransicion; //determina si hay que restar o sumar para llegar al determinado valor de saturacion
-  int cantidadManejada = 3;
+  int cantidadManejada = 5;
 
   //inicializacion variables timer saturacion
   unsigned long tiempoCambioSaturacion = millis();
@@ -761,45 +805,43 @@ void efecto4() {
           break;
       }
       if (millis() - tiempoCambioSaturacion > cuantoTiempoCambioSaturacion) { //10
-        tiempoCambioSaturacion = millis();
-
-        if (memoria_saturacion_10 + cantidadManejada >= saturacion_10)
+        if (memoria_saturacion_10 + cantidadManejada > saturacion_10)
         {
           saturacion_10 = saturacion_10 + cantidadManejada;
         }
-        if (memoria_saturacion_9 + cantidadManejada >= saturacion_9)
+        if (memoria_saturacion_9 + cantidadManejada > saturacion_9)
         {
           saturacion_9 = saturacion_9 + cantidadManejada;
         }
-        if (memoria_saturacion_8 + cantidadManejada >= saturacion_8)
+        if (memoria_saturacion_8 + cantidadManejada > saturacion_8)
         {
           saturacion_8 = saturacion_8 + cantidadManejada;
         }
-        if (memoria_saturacion_7 + cantidadManejada >= saturacion_7)
+        if (memoria_saturacion_7 + cantidadManejada > saturacion_7)
         {
           saturacion_7 = saturacion_7 + cantidadManejada;
         }
-        if (memoria_saturacion_6 + cantidadManejada >= saturacion_6)
+        if (memoria_saturacion_6 + cantidadManejada > saturacion_6)
         {
           saturacion_6 = saturacion_6 + cantidadManejada;
         }
-        if (memoria_saturacion_5 + cantidadManejada >= saturacion_5)
+        if (memoria_saturacion_5 + cantidadManejada > saturacion_5)
         {
           saturacion_5 = saturacion_5 + cantidadManejada;
         }
-        if (memoria_saturacion_4 + cantidadManejada >= saturacion_4)
+        if (memoria_saturacion_4 + cantidadManejada > saturacion_4)
         {
           saturacion_4 = saturacion_4 + cantidadManejada;
         }
-        if (memoria_saturacion_3 + cantidadManejada >= saturacion_3)
+        if (memoria_saturacion_3 + cantidadManejada > saturacion_3)
         {
           saturacion_3 = saturacion_3 + cantidadManejada;
         }
-        if (memoria_saturacion_2 + cantidadManejada >= saturacion_2)
+        if (memoria_saturacion_2 + cantidadManejada > saturacion_2)
         {
           saturacion_2 = saturacion_2 + cantidadManejada;
         }
-        if (memoria_saturacion_1 + cantidadManejada >= saturacion_1)
+        if (memoria_saturacion_1 + cantidadManejada > saturacion_1)
         {
           saturacion_1 = saturacion_1 + cantidadManejada;
         }
@@ -843,7 +885,7 @@ void efecto4() {
         {
           saturacion_1 = saturacion_1 - cantidadManejada;
         }
-
+        tiempoCambioSaturacion = millis();
       }
       //se ejecuta una vez cuando la saturacion_actual cambia
 
