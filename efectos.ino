@@ -179,7 +179,7 @@ void efecto3() {
       enable_efectoColor = true;
       cuenta_relojMaquinaEstadosEfectos = 0;
       maquina = estadoColor;
-      Serial.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+      Serial2.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
     }
     if ((maquina == estadoColor) && (colorPrecionado == true) )
     {
@@ -187,9 +187,9 @@ void efecto3() {
       cuenta_relojMaquinaEstadosEfectos = 0;
       colorPrecionado = false;
       maquina = timerColor;
-      Serial.println("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
+      Serial2.println("yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
     }
-    if ((maquina == timerColor) && (cuenta_relojMaquinaEstadosEfectos > 10))
+    if ((maquina == timerColor) && (cuenta_relojMaquinaEstadosEfectos > 8))
     {
       enable_efectoSonrisa = false;
       enable_efectoReboteSaturacion = true;
@@ -202,10 +202,11 @@ void efecto3() {
       cuenta_relojMaquinaEstadosEfectos = 0;
       rebotePrecionado = false;
       maquina = timerRebote;
-      Serial.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
+      Serial2.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
     }
-    if ((maquina == timerRebote) && (cuenta_relojMaquinaEstadosEfectos > 10))
+    if ((maquina == timerRebote) && (off_efectoReboteSaturacion == true))
     {
+      off_efectoReboteSaturacion = false;
       enable_efectoSonrisa = true;
       enable_efectoReboteSaturacion = false;
       enable_efectoColor = false;
@@ -217,10 +218,11 @@ void efecto3() {
       cuenta_relojMaquinaEstadosEfectos = 0;
       sonrisaPrecionado = false;
       maquina = timerSonrisa;
-      Serial.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+      Serial2.println("rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
     }
-    if ((maquina == timerSonrisa) && (cuenta_relojMaquinaEstadosEfectos > 10))
+    if ((maquina == timerSonrisa) && (off_efectoReboteSaturacion==true))
     {
+      off_efectoReboteSaturacion=false;
       enable_efectoSonrisa = false;
       enable_efectoReboteSaturacion = false;
       enable_efectoColor = true;
@@ -274,11 +276,10 @@ void efecto3() {
         {
           saturacion_actual--;
         }
-        if ((flag_efectoReboteSaturacion == true) && (saturacion_actual <= 0))
+        if ((flag_efectoReboteSaturacion == true) && (saturacion_actual < 0))
         {
           on_efectoReboteSaturacion = false;
           flag_efectoReboteSaturacion = false;
-          saturacion_actual = 0;
         }
         medioSegundo = 0;
       }
@@ -401,7 +402,7 @@ void efecto3() {
           Serial.println(saturacion_actual);
           break;
         case 10:
-          memoria_saturacion_10 = 170;
+          memoria_saturacion_10 = 190;
           memoria_saturacion_9 = 190;
           memoria_saturacion_8 = 210;
           memoria_saturacion_7 = 220;
@@ -415,7 +416,7 @@ void efecto3() {
           Serial.println(saturacion_actual);
           break;
         case 9:
-          memoria_saturacion_10 = 150;
+          memoria_saturacion_10 = 160;
           memoria_saturacion_9 = 160;
           memoria_saturacion_8 = 190;
           memoria_saturacion_7 = 220;
@@ -429,7 +430,7 @@ void efecto3() {
           Serial.println(saturacion_actual);
           break;
         case 8:
-          memoria_saturacion_10 = 130;
+          memoria_saturacion_10 = 160;
           memoria_saturacion_9 = 160;
           memoria_saturacion_8 = 190;
           memoria_saturacion_7 = 220;
@@ -443,7 +444,7 @@ void efecto3() {
           Serial.println(saturacion_actual);
           break;
         case 7:
-          memoria_saturacion_10 = 20;
+          memoria_saturacion_10 = 150;
           memoria_saturacion_9 = 150;
           memoria_saturacion_8 = 180;
           memoria_saturacion_7 = 220;
@@ -457,7 +458,7 @@ void efecto3() {
           Serial.println(saturacion_actual);
           break;
         case 6:
-          memoria_saturacion_10 = 20;
+          memoria_saturacion_10 = 130;
           memoria_saturacion_9 = 130;
           memoria_saturacion_8 = 150;
           memoria_saturacion_7 = 180;
@@ -538,11 +539,13 @@ void efecto3() {
           memoria_saturacion_3 = 140;
           memoria_saturacion_2 = 60;
           memoria_saturacion_1 = 0;
-          Serial.print("frame 1, count:");
+          //Serial.print("frame 1, count:");
           Serial.println(saturacion_actual);
           break;
-        default:
+        case 0:
           Serial.println("termino el efecto rebote");
+          off_efectoReboteSaturacion=true;
+          saturacion_actual=1;
           break;
       }
     }
@@ -665,6 +668,7 @@ void efecto3() {
       {
         on_efectoSonrisa = false;
         bandera_brillo = false;
+        off_efectoSonrisa = true;
       }
       Serial.println(brillop);
       newBr = brillop;

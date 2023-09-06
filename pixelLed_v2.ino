@@ -49,6 +49,8 @@ bool on_efectoReboteSaturacion = false;
 bool flag_efectoReboteSaturacion = false;
 bool on_efectoSonrisa = false;
 bool flag_timeAfterSerial_efecto3 = false;
+bool off_efectoReboteSaturacion = false;
+bool off_efectoSonrisa = false;
 
 //variables timer efectos
 bool tiempoEsperaEfectos = false;
@@ -222,31 +224,32 @@ void loop() {
     delay (5000);
     }
   */
+  /*
+       if (Serial.available()) {
+      int inByte = Serial.read();
+      Serial2.write(inByte);
+    }
 
-  if (Serial1.available()) {
-    int inByte = Serial1.read();
-    Serial.write(inByte);
-  }
+  */
 
-  while (1) {
 
-    if (efectoIdx == 0)
-      efecto0();
-    else if (efectoIdx == 1)
-      efecto1();
-    else if (efectoIdx == 2)
-      efecto2();
-    else if (efectoIdx == 3)
-      efecto3();
-    else if (efectoIdx == 4)
-      efecto4();
-    else if (efectoIdx == 5)
-      efecto5();
-    else if (efectoIdx == 6)
-      efecto6();
-    else if (efectoIdx == 7)
-      efecto7();
-  }
+  if (efectoIdx == 0)
+    efecto0();
+  else if (efectoIdx == 1)
+    efecto1();
+  else if (efectoIdx == 2)
+    efecto2();
+  else if (efectoIdx == 3)
+    efecto3();
+  else if (efectoIdx == 4)
+    efecto4();
+  else if (efectoIdx == 5)
+    efecto5();
+  else if (efectoIdx == 6)
+    efecto6();
+  else if (efectoIdx == 7)
+    efecto7();
+
 
 }
 void serialCheck() {
