@@ -173,8 +173,20 @@ void efecto3() {
     }
     if (maquina == estadoInicial)
     {
-      maquina = estadoColor;
+      maquina = humanoDetectado;
       Serial.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+    }
+    if (maquina == humanoDetectado)
+    {
+      if (humanoPrecionado == true)
+      {
+        on_humanoPrecionado = true;
+      }
+      if(off_humanoPrecionado == true)
+      {
+        maquina = estadoColor;
+        off_humanoPrecionado = false;
+      }
     }
     if (maquina == estadoColor )
     {
@@ -232,16 +244,6 @@ void efecto3() {
       {
         cuentaEfecto3 = HUE_PURPLE + 10 ;
         Serial.println("violeta");
-        cuentaEspectro = 0;
-        contadorSaturacionColores = 0;
-        cantidadColorAumentado = 2;
-        flag_timeAfterSerial_efecto3 = true;
-        maquina = timerColor;
-      }
-      if (colorActual == ROSA)
-      {
-        cuentaEfecto3 = HUE_PINK;
-        Serial.println("rosa");
         cuentaEspectro = 0;
         contadorSaturacionColores = 0;
         cantidadColorAumentado = 2;
@@ -712,6 +714,28 @@ void efecto3() {
     }
     //sp es la velocidad global
     delay (sp * 10);
+    if (on_humanoDetecado == true)
+    {
+      if (flag_brilloMaximo_humanoDetectado == false)
+      {
+        brillop = brillop + 10;
+      }
+      if ((flag_brilloMaximo_humanoDetectado == false) && (brillop >= 240))
+      {
+        flag_brilloMaximo_humanoDetectado = true;
+      }
+      if (flag_brilloMaximo_humanoDetectado == true)
+      {
+        brillop = brillop - 10
+      }
+      if ((flag_brilloMaximo_humanoDetectado == true) && (brillop <= BRIGHTNESS))
+      {
+        brillop = BRIGHTNESS;
+        flag_brilloMaximo_humanoDetectado = false;
+        on_humanoDetecado = false;
+        off_humanoDetecado = true;
+      }
+    }
     if (on_efectoSonrisa == true)
     {
       if ((bandera_brillo == false) && (bandera_brillo_max == false))

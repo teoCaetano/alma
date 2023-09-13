@@ -45,8 +45,7 @@ enum Colores {
   NARANJA,
   VERDE,
   AZUL,
-  PURPURA,
-  ROSA
+  PURPURA
 };
 
 Colores colorActual = NINGUNO;
@@ -64,6 +63,9 @@ bool on_efectoReboteSaturacion = false;
 bool flag_efectoReboteSaturacion = false;
 bool on_efectoSonrisa = false;
 bool flag_timeAfterSerial_efecto3 = false;
+bool on_humanoDetecado = false;
+bool flag_brilloMaximo_humanoDetectado = false;
+bool off_humanoDetectado = false;
 bool off_efectoReboteSaturacion = false;
 bool off_efectoSonrisa = false;
 bool off_efectoColor = false;
@@ -77,11 +79,13 @@ int cuentaEsperaColor = 0;
 bool colorPrecionado = false;
 bool rebotePrecionado = false;
 bool sonrisaPrecionado = false;
+bool humanoPrecionado = false;
 bool enable_serial = true;
 
 
 enum maquinaEstadoEfectos {
   estadoInicial,
+  humanoDetectado,
   estadoColor,
   timerColor,
   estadoRebote,
@@ -319,25 +323,16 @@ void serialCheck() {
       on_efectoSonrisa = true;
     }
     else if (ch == 'o') {
-      saturacion_actual = 5;
-      memoria_saturacion_10 = 10;
-      memoria_saturacion_9 = 10;
-      memoria_saturacion_8 = 20;
-      memoria_saturacion_7 = 30;
-      memoria_saturacion_6 = 40;
-      memoria_saturacion_5 = 190;
-      memoria_saturacion_4 = 220;
-      memoria_saturacion_3 = 250;
-      memoria_saturacion_2 = 10;
-      memoria_saturacion_1 = 10;
+      humanoPrecionado = true;
     }
-    else if (ch == 'R') {
-      if (enable_serial == true)
-      {
-        colorActual = ROSA;
-        colorPrecionado = true;
-        enable_serial = false;
-      }
+    else if (ch == 'p') {
+      cuentaEfecto3 = HUE_RED;
+      Serial.println("rojo");
+      cuentaEspectro = 0;
+      contadorSaturacionColores = 0;
+      flag_timeAfterSerial_efecto3 = true;
+      colorPrecionado = true;
+      cantidadColorAumentado = 2;
     }
     else if (ch == 'Z') {
       if (enable_serial == true)
