@@ -19,8 +19,8 @@
 
 
 
-#include <HTTPClient.h>
-#include <WiFi.h>
+//#include <HTTPClient.h>
+//#include <WiFi.h>
 
 #include <FastLED.h>
 #include "config.h"
@@ -33,20 +33,67 @@ int newBr = br;
 int sp = 5;
 int globalHue = 0;
 int color = 0;
+
+//variables cambio de color
 int cuentaEfecto3 = 0;
 int cuentaEspectro = 0;
 int espectroHueEfecto3 = 220;
+enum Colores {
+  NINGUNO,
+  ROJO,
+  AMARILLO,
+  NARANJA,
+  VERDE,
+  AZUL,
+  PURPURA,
+  ROSA
+};
+
+Colores colorActual = NINGUNO;
+Colores colorAnterior = NINGUNO;
 
 
 //variables cambio dinamico saturacion
 uint8_t saturacion_actual = 0;
 uint8_t saturacion_anterior = 0;
+uint8_t contadorSaturacionColores = 0;
+uint8_t cantidadColorAumentado = 4;
 
 //variables efectos
-bool enable_efectoReboteSaturacion = false;
+bool on_efectoReboteSaturacion = false;
 bool flag_efectoReboteSaturacion = false;
-bool enable_efectoSonrisa = false;
-bool flag_timeAfterSerial_efecto3 = true;
+bool on_efectoSonrisa = false;
+bool flag_timeAfterSerial_efecto3 = false;
+bool off_efectoReboteSaturacion = false;
+bool off_efectoSonrisa = false;
+bool off_efectoColor = false;
+
+//variables timer efectos
+bool tiempoEsperaEfectos = false;
+int cuentaEsperaEfectos = 0;
+int cuentaEsperaColor = 0;
+
+//Variables Maquida de estados
+bool colorPrecionado = false;
+bool rebotePrecionado = false;
+bool sonrisaPrecionado = false;
+bool enable_serial = true;
+
+
+enum maquinaEstadoEfectos {
+  estadoInicial,
+  estadoColor,
+  timerColor,
+  estadoRebote,
+  timerRebote,
+  estadoSonrisa,
+  timerSonrisa
+};
+
+maquinaEstadoEfectos maquina = estadoInicial;
+
+unsigned int relojMaquinaEstadosEfectos = 0;
+int cuenta_relojMaquinaEstadosEfectos = 0;
 
 //valor de saturacion inicial de cada capa(son las variables que se escribemn)
 uint8_t saturacion_10 = 10;
@@ -62,13 +109,13 @@ uint8_t saturacion_1 = 250;
 
 //inicializo las "memorias" son valores que establezco contra los cuales comparo
 uint8_t memoria_saturacion_10 = 10;
-uint8_t memoria_saturacion_9 = 70;
-uint8_t memoria_saturacion_8 = 100;
-uint8_t memoria_saturacion_7 = 130;
-uint8_t memoria_saturacion_6 = 170;
-uint8_t memoria_saturacion_5 = 200;
-uint8_t memoria_saturacion_4 = 220;
-uint8_t memoria_saturacion_3 = 250;
+uint8_t memoria_saturacion_9 = 30;
+uint8_t memoria_saturacion_8 = 50;
+uint8_t memoria_saturacion_7 = 70;
+uint8_t memoria_saturacion_6 = 120;
+uint8_t memoria_saturacion_5 = 150;
+uint8_t memoria_saturacion_4 = 200;
+uint8_t memoria_saturacion_3 = 220;
 uint8_t memoria_saturacion_2 = 250;
 uint8_t memoria_saturacion_1 = 250;
 
@@ -111,7 +158,7 @@ int getLienzoV2(int x, int y) {
 
 
 
-void IRAM_ATTR leerControl();
+//void IRAM_ATTR leerControl();
 
 void setup() {
   Serial.begin(115200);
@@ -154,13 +201,13 @@ void setup() {
 
   pinMode (pRFDATA, INPUT_PULLUP);
   delay(5);
-  attachInterrupt(pRFDATA, leerControl, CHANGE);
-
+  //attachInterrupt(pRFDATA, leerControl, CHANGE);
+/*
   Serial.print ("WIFI: ");
   //setupWifiEvents();
   //initWifi();
   Serial.println ();
-
+*/
 
   Serial.println ("START!");
 }
@@ -169,6 +216,7 @@ unsigned int baseHue = 0;
 
 
 void loop() {
+
   /*while (1) {
     HTTPClient http;
     if (WiFi.status() == WL_CONNECTED) {
@@ -191,35 +239,37 @@ void loop() {
     delay (5000);
     }
   */
+  /*
+       if (Serial.available()) {
+      int inByte = Serial.read();
+      Serial2.write(inByte);
+    }
 
-  if (Serial1.available()) {
-    int inByte = Serial1.read();
-    Serial.write(inByte);
-  }
+  */
 
-  while (1) {
 
-    if (efectoIdx == 0)
-      efecto0();
-    else if (efectoIdx == 1)
-      efecto1();
-    else if (efectoIdx == 2)
-      efecto2();
-    else if (efectoIdx == 3)
-      efecto3();
-    else if (efectoIdx == 4)
-      efecto4();
-    else if (efectoIdx == 5)
-      efecto5();
-    else if (efectoIdx == 6)
-      efecto6();
-    else if (efectoIdx == 7)
-      efecto7();
-  }
+  if (efectoIdx == 0)
+    efecto0();
+  else if (efectoIdx == 1)
+    efecto1();
+  else if (efectoIdx == 2)
+    efecto2();
+  else if (efectoIdx == 3)
+    efecto3();
+  else if (efectoIdx == 4)
+    efecto4();
+  else if (efectoIdx == 5)
+    efecto5();
+  else if (efectoIdx == 6)
+    efecto6();
+  else if (efectoIdx == 7)
+    efecto7();
+
+
 }
 void serialCheck() {
-  if (Serial.available()) {
 
+  if (Serial.available()) {
     char ch = Serial.read();
     Serial.println(ch);
     if (ch == '0')
@@ -251,36 +301,22 @@ void serialCheck() {
     else if (ch == 's')
       bajarColor();
     else if (ch == 't') {
-      enable_efectoReboteSaturacion = true;
+      if (enable_serial == true)
+      {
+        rebotePrecionado = true;
+      }
     }
     else if (ch == 'y') {
-      enable_efectoSonrisa = true;
+      if (enable_serial == true)
+      {
+        sonrisaPrecionado = true;
+      }
     }
     else if (ch == 'u') {
-      saturacion_actual = 3;
-      memoria_saturacion_10 = 10;
-      memoria_saturacion_9 = 10;
-      memoria_saturacion_8 = 20;
-      memoria_saturacion_7 = 130;
-      memoria_saturacion_6 = 150;
-      memoria_saturacion_5 = 190;
-      memoria_saturacion_4 = 220;
-      memoria_saturacion_3 = 250;
-      memoria_saturacion_2 = 10;
-      memoria_saturacion_1 = 10;
+      on_efectoReboteSaturacion = true;
     }
     else if (ch == 'i') {
-      saturacion_actual = 4;
-      memoria_saturacion_10 = 10;
-      memoria_saturacion_9 = 10;
-      memoria_saturacion_8 = 20;
-      memoria_saturacion_7 = 30;
-      memoria_saturacion_6 = 150;
-      memoria_saturacion_5 = 190;
-      memoria_saturacion_4 = 220;
-      memoria_saturacion_3 = 250;
-      memoria_saturacion_2 = 10;
-      memoria_saturacion_1 = 10;
+      on_efectoSonrisa = true;
     }
     else if (ch == 'o') {
       saturacion_actual = 5;
@@ -295,48 +331,61 @@ void serialCheck() {
       memoria_saturacion_2 = 10;
       memoria_saturacion_1 = 10;
     }
-    else if (ch == 'p') {
-      saturacion_actual = 6;
-      memoria_saturacion_10 = 0;
-      memoria_saturacion_9 = 0;
-      memoria_saturacion_8 = 0;
-      memoria_saturacion_7 = 0;
-      memoria_saturacion_6 = 0;
-      memoria_saturacion_5 = 0;
-      memoria_saturacion_4 = 0;
-      memoria_saturacion_3 = 0;
-      memoria_saturacion_2 = 10;
-      memoria_saturacion_1 = 10;
+    else if (ch == 'R') {
+      if (enable_serial == true)
+      {
+        colorActual = ROSA;
+        colorPrecionado = true;
+        enable_serial = false;
+      }
     }
     else if (ch == 'Z') {
-      cuentaEfecto3 = 240;
-      cuentaEspectro = 0;
-      flag_timeAfterSerial_efecto3 = true;
+      if (enable_serial == true)
+      {
+        colorActual = ROJO;
+        colorPrecionado = true;
+        enable_serial = false;
+      }
     }
     else if (ch == 'Y') {
-      cuentaEfecto3 = 22;
-      cuentaEspectro = 0;
-      flag_timeAfterSerial_efecto3 = true;
+      if (enable_serial == true)
+      {
+        colorActual = NARANJA;
+        colorPrecionado = true;
+        enable_serial = false;
+      }
     }
     else if (ch == 'X') {
-      cuentaEfecto3 = 42;
-      cuentaEspectro = 0;
-      flag_timeAfterSerial_efecto3 = true;
+      if (enable_serial == true)
+      {
+        colorActual = AMARILLO;
+        colorPrecionado = true;
+        enable_serial = false;
+      }
     }
     else if (ch == 'W') {
-      cuentaEfecto3 = 78;
-      cuentaEspectro = 0;
-      flag_timeAfterSerial_efecto3 = true;
+      if (enable_serial == true)
+      {
+        colorActual = VERDE;
+        colorPrecionado = true;
+        enable_serial = false;
+      }
     }
     else if (ch == 'V') {
-      cuentaEfecto3 = 140;
-      cuentaEspectro = 0;
-      flag_timeAfterSerial_efecto3 = true;
+      if (enable_serial == true)
+      {
+        colorActual = AZUL;
+        colorPrecionado = true;
+        enable_serial = false;
+      }
     }
     else if (ch == 'U') {
-      cuentaEfecto3 = 198;
-      cuentaEspectro = 0;
-      flag_timeAfterSerial_efecto3 = true;
+      if (enable_serial == true)
+      {
+        colorActual = PURPURA;
+        colorPrecionado = true;
+        enable_serial = false;
+      }
     }
   }
 }

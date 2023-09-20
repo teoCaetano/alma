@@ -20,7 +20,7 @@
 #define COLOR_ORDER GRB
 #define CHIPSET     WS2812
 #define NUM_LEDS    928         //define la cantidad de leds, si se cambia no funciona relacionado a FRAME_BUFFER
-#define BRIGHTNESS  70
+#define BRIGHTNESS  50
 #define NUM_EFECTOS 8
 #define FRAME_BUFFER_SIZE 400     //20 x 20 define la matriz de pixeles viruales 
 
