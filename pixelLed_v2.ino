@@ -19,8 +19,8 @@
 
 
 
-#include <HTTPClient.h>
-#include <WiFi.h>
+//#include <HTTPClient.h>
+//#include <WiFi.h>
 
 #include <FastLED.h>
 #include "config.h"
@@ -158,7 +158,7 @@ int getLienzoV2(int x, int y) {
 
 
 
-void IRAM_ATTR leerControl();
+//void IRAM_ATTR leerControl();
 
 void setup() {
   Serial.begin(115200);
@@ -201,13 +201,13 @@ void setup() {
 
   pinMode (pRFDATA, INPUT_PULLUP);
   delay(5);
-  attachInterrupt(pRFDATA, leerControl, CHANGE);
-
+  //attachInterrupt(pRFDATA, leerControl, CHANGE);
+/*
   Serial.print ("WIFI: ");
   //setupWifiEvents();
   //initWifi();
   Serial.println ();
-
+*/
 
   Serial.println ("START!");
 }

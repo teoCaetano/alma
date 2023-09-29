@@ -335,7 +335,7 @@ void efecto3() {
         cuentaEspectro++;
       }
 
-      if (cuentaEspectro >= 3)
+      if (cuentaEspectro >= 2)
       {
         off_efectoColor = true;
         flag_timeAfterSerial_efecto3 = false;
