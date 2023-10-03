@@ -142,7 +142,7 @@ void efecto3() {
   borrar();
   Serial.println("EFECTO 3");
   //gravo los valores del array constante al array prueba
-uklgh6j  for (int n = 0; n < 400; n++) {
+  for (int n = 0; n < 400; n++) {
     lienzoHSV2[n][0] = lienzoHSV[n][0];
     lienzoHSV2[n][1] = lienzoHSV[n][1];
     lienzoHSV2[n][2] = lienzoHSV[n][2];
@@ -186,12 +186,13 @@ uklgh6j  for (int n = 0; n < 400; n++) {
       {
         maquina = estadoColor;
         off_humanoDetectado = false;
+        cuenta_relojMaquinaEstadosEfectos = 0;
       }
-      if(valor_envioCharFlash>= brillop)
+      if ((valor_envioCharFlash = brillop)&&(flag_brilloMaximo_humanoDetectado==false))
       {
-        if(Serial.available)
+        if (Serial.available())
         {
-          Serial.send('+');
+          Serial.write('+');
         }
       }
     }
@@ -266,6 +267,15 @@ uklgh6j  for (int n = 0; n < 400; n++) {
         cantidadColorAumentado = 2;
         flag_timeAfterSerial_efecto3 = true;
         maquina = timerColor;
+      }
+      if (cuenta_relojMaquinaEstadosEfectos >= tiempoRecepcionDeColor)
+      {
+        maquina = humanoDetectado;
+        if (Serial.available())
+        {
+          Serial.write('-');
+        }
+
       }
       colorAnterior = colorActual;
     }
@@ -731,7 +741,7 @@ uklgh6j  for (int n = 0; n < 400; n++) {
     }
     //sp es la velocidad global
     delay (sp * 10);
-    if (on_humanoDetecado == true)
+    if (on_humanoDetectado == true)
     {
       if (flag_brilloMaximo_humanoDetectado == false)
       {
@@ -749,8 +759,8 @@ uklgh6j  for (int n = 0; n < 400; n++) {
       {
         brillop = BRIGHTNESS;
         flag_brilloMaximo_humanoDetectado = false;
-        on_humanoDetecado = false;
-        off_humanoDetecado = true;
+        on_humanoDetectado = false;
+        off_humanoDetectado = true;
       }
     }
     if (on_efectoSonrisa == true)

@@ -34,6 +34,7 @@ int sp = 5;
 int globalHue = 0;
 int color = 0;
 int valor_envioCharFlash = 200;
+int tiempoRecepcionDeColor = 10; //segundos
 
 //variables cambio de color
 int cuentaEfecto3 = 0;
@@ -66,7 +67,7 @@ bool on_efectoReboteSaturacion = false;
 bool flag_efectoReboteSaturacion = false;
 bool on_efectoSonrisa = false;
 bool flag_timeAfterSerial_efecto3 = false;
-bool on_humanoDetecado = false;
+bool on_humanoDetectado = false;
 bool flag_brilloMaximo_humanoDetectado = false;
 bool off_humanoDetectado = false;
 bool off_efectoReboteSaturacion = false;
