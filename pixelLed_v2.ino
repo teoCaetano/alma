@@ -33,11 +33,13 @@ int newBr = br;
 int sp = 5;
 int globalHue = 0;
 int color = 0;
+int valor_envioCharFlash = 200;
 
 //variables cambio de color
 int cuentaEfecto3 = 0;
 int cuentaEspectro = 0;
 int espectroHueEfecto3 = 220;
+
 enum Colores {
   NINGUNO,
   ROJO,
@@ -45,7 +47,8 @@ enum Colores {
   NARANJA,
   VERDE,
   AZUL,
-  PURPURA
+  PURPURA,
+  ROSA
 };
 
 Colores colorActual = NINGUNO;
@@ -325,14 +328,13 @@ void serialCheck() {
     else if (ch == 'o') {
       humanoPrecionado = true;
     }
-    else if (ch == 'p') {
-      cuentaEfecto3 = HUE_RED;
-      Serial.println("rojo");
-      cuentaEspectro = 0;
-      contadorSaturacionColores = 0;
-      flag_timeAfterSerial_efecto3 = true;
-      colorPrecionado = true;
-      cantidadColorAumentado = 2;
+    else if (ch == 'R') {
+      if (enable_serial == true)
+      {
+        colorActual = ROSA;
+        colorPrecionado = true;
+        enable_serial = false;
+      }
     }
     else if (ch == 'Z') {
       if (enable_serial == true)
