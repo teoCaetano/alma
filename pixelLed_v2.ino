@@ -34,6 +34,7 @@ int sp = 5;
 int globalHue = 0;
 int color = 0;
 int valor_envioCharFlash = 200;
+bool flag_envioCharFlash = true ;
 int tiempoRecepcionDeColor = 10; //segundos
 
 //variables cambio de color
@@ -57,7 +58,7 @@ Colores colorAnterior = NINGUNO;
 
 
 //variables cambio dinamico saturacion
-uint8_t saturacion_actual = 0;
+uint8_t saturacion_actual = 1;
 uint8_t saturacion_anterior = 0;
 uint8_t contadorSaturacionColores = 0;
 uint8_t cantidadColorAumentado = 4;
@@ -258,20 +259,9 @@ void loop() {
 
   if (efectoIdx == 0)
     efecto0();
-  else if (efectoIdx == 1)
-    efecto1();
-  else if (efectoIdx == 2)
-    efecto2();
   else if (efectoIdx == 3)
     efecto3();
-  else if (efectoIdx == 4)
-    efecto4();
-  else if (efectoIdx == 5)
-    efecto5();
-  else if (efectoIdx == 6)
-    efecto6();
-  else if (efectoIdx == 7)
-    efecto7();
+
 
 
 }
@@ -296,10 +286,6 @@ void serialCheck() {
       efectoIdx = 6;
     else if (ch == '7')
       efectoIdx = 7;
-    else if (ch == '+')
-      subirSpeed();
-    else if (ch == '-')
-      bajarSpeed();
     else if (ch == 'q')
       subirBrillo();
     else if (ch == 'a')

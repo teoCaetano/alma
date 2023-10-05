@@ -50,59 +50,6 @@ void efecto0() {
 }
 
 
-
-void efecto1() {
-  Serial.println("EFECTO 1");
-
-  while (efectoIdx == 1) {
-    if (color == 0)
-      borrar();
-    else if (color == 1)
-      colorPleno (255, 0, 255);
-    else {
-      colorPleno(50 * color, 100, 100);
-    }
-    delay(50);
-
-    serialCheck();
-  }
-}
-
-
-void efecto2() {
-  uint8_t hue = 0;
-  uint8_t sat = 0;
-  uint8_t val = 0;
-  int count = 0;
-  int valor = 0;
-  Serial.println("EFECTO 2");
-  FastLED.clear();
-  fill_solid( leds, NUM_LEDS, CRGB(50, 0, 200));
-  FastLED.show();
-  while (efectoIdx == 2) {
-    for (int y = 0; y < NUM_LEDS; y++)
-    {
-      for (int x = 0; x < 400; x++) {
-        Serial.println("yyyyyyyyyyyyyyyyyyyyyyyyyyy");
-        Serial.println(x);
-        valor = frame2PixelLedMap[x];
-        if (y == valor) {
-          Serial.println("xxxxxxxxxxxxxxxxxx");
-          Serial.println(valor);
-          leds[valor] = CRGB(0, 250, 0);
-        }
-        else {
-          leds[valor] = CRGB(250, 0, 0);
-        }
-      }
-    }
-    FastLED.show();
-    serialCheck();
-  }
-  newBr = BRIGHTNESS;
-}
-
-
 // LIENZO ROTAR
 /* flag= FOA
    encontrar una manera de aumentar y disminur el centro
@@ -166,8 +113,8 @@ void efecto3() {
 
       }
     }
-    if (millis() - relojMaquinaEstadosEfectos > 1000) { //10
-
+    if (millis() - relojMaquinaEstadosEfectos > 1000)
+    {
       cuenta_relojMaquinaEstadosEfectos++;
       relojMaquinaEstadosEfectos = millis();
     }
@@ -178,22 +125,17 @@ void efecto3() {
     }
     if (maquina == humanoDetectado)
     {
-      if (humanoDetectado == true)
+      Serial.println("1234567890");
+      if (humanoPrecionado == true)
       {
         on_humanoDetectado = true;
+        humanoPrecionado = false;
       }
       if (off_humanoDetectado == true)
       {
         maquina = estadoColor;
         off_humanoDetectado = false;
         cuenta_relojMaquinaEstadosEfectos = 0;
-      }
-      if ((valor_envioCharFlash = brillop)&&(flag_brilloMaximo_humanoDetectado==false))
-      {
-        if (Serial.available())
-        {
-          Serial.write('+');
-        }
       }
     }
     if (maquina == estadoColor )
@@ -268,14 +210,16 @@ void efecto3() {
         flag_timeAfterSerial_efecto3 = true;
         maquina = timerColor;
       }
+      Serial.println(cuenta_relojMaquinaEstadosEfectos );
       if (cuenta_relojMaquinaEstadosEfectos >= tiempoRecepcionDeColor)
       {
+        Serial.print('-');
         maquina = humanoDetectado;
-        if (Serial.available())
-        {
-          Serial.write('-');
-        }
-
+      }
+      if (humanoPrecionado == true)
+      {
+        maquina = humanoDetectado;
+        colorActual = NINGUNO;
       }
       colorAnterior = colorActual;
     }
@@ -294,6 +238,17 @@ void efecto3() {
         off_efectoColor = false;
         maquina = estadoSonrisa;
         enable_serial = false;
+      }
+      if ((colorPrecionado == true) && (colorActual != colorAnterior))
+      {
+        off_efectoReboteSaturacion = false;
+        maquina = estadoColor;
+        enable_serial = false;
+      }
+      if (humanoPrecionado == true)
+      {
+        maquina = humanoDetectado;
+        colorActual = NINGUNO;
       }
     }
     if (maquina == estadoRebote)
@@ -317,6 +272,11 @@ void efecto3() {
         maquina = estadoSonrisa;
         enable_serial = false;
       }
+      if (humanoPrecionado == true)
+      {
+        maquina = humanoDetectado;
+        colorActual = NINGUNO;
+      }
     }
     if (maquina == estadoSonrisa)
     {
@@ -338,6 +298,11 @@ void efecto3() {
         off_efectoSonrisa = false;
         maquina = estadoRebote;
         enable_serial = false;
+      }
+      if (humanoPrecionado == true)
+      {
+        maquina = humanoDetectado;
+        colorActual = NINGUNO;
       }
     }
 
@@ -743,9 +708,19 @@ void efecto3() {
     delay (sp * 10);
     if (on_humanoDetectado == true)
     {
+      Serial.println(brillop);
       if (flag_brilloMaximo_humanoDetectado == false)
       {
         brillop = brillop + 10;
+      }
+      if ((brillop >= valor_envioCharFlash ) && (flag_brilloMaximo_humanoDetectado == false))
+      {
+        if (flag_envioCharFlash == true)
+        {
+          flag_envioCharFlash = false;
+          Serial.print('+');
+          Serial.print("++++++++++++++++++++++++++++++++++++++++++++");
+        }
       }
       if ((flag_brilloMaximo_humanoDetectado == false) && (brillop >= 240))
       {
@@ -761,6 +736,7 @@ void efecto3() {
         flag_brilloMaximo_humanoDetectado = false;
         on_humanoDetectado = false;
         off_humanoDetectado = true;
+        flag_envioCharFlash = true;
       }
     }
     if (on_efectoSonrisa == true)
@@ -811,402 +787,9 @@ void efecto3() {
         off_efectoSonrisa = true;
         Serial.println("por favorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
       }
-      newBr = brillop;
+
     }
+    newBr = brillop;
     serialCheck();
-  }
-}
-
-
-
-
-// CIRCCULOS LATIDO
-void efecto4() {
-  //inicializacion variables cromaticas
-  uint8_t hue = 0;
-  uint8_t sat = 0;
-  uint8_t val = 0;
-  //inicializacion variables timer
-  unsigned long effectTimer = millis();
-
-  //inicializacion variables brillo - PRUEBA
-  int brillop = 5;
-  bool bandera_brillo = false;
-  bool bandera_brillo_intermedio = false;
-
-  //inicializacion variables saturacion dinamica
-  int diferenciaEstadosSaturacion = 0;
-  bool tipoTransicion; //determina si hay que restar o sumar para llegar al determinado valor de saturacion
-  int cantidadManejada = 5;
-
-  //inicializacion variables timer saturacion
-  unsigned long tiempoCambioSaturacion = millis();
-  int cuantoTiempoCambioSaturacion = 2;
-
-  borrar();
-  Serial.println("EFECTO 4");
-  //gravo los valores del array constante al array prueba
-  for (int n = 0; n < 400; n++) {
-    int s = lienzoHSV2[n][1];
-
-    lienzoHSV2[n][0] = lienzoHSV[n][0];
-
-    lienzoHSV2[n][1] = lienzoHSV[n][1];
-
-    lienzoHSV2[n][2] = lienzoHSV[n][2];
-
-    int Radio = valorRadialLeds[n];
-    switch (Radio) {
-      case 10:
-        lienzoHSV2[n][1] = saturacion_10;
-        lienzoHSV2[n][2] = 250;
-        break;
-      case 9:
-        lienzoHSV2[n][1] = saturacion_9;
-        break;
-      case 8:
-        lienzoHSV2[n][1] = saturacion_8;
-        break;
-      case 7:
-        lienzoHSV2[n][1] = saturacion_7;
-        break;
-      case 6:
-        lienzoHSV2[n][1] = saturacion_6;
-        break;
-      case 5:
-        lienzoHSV2[n][1] = saturacion_5;
-        break;
-      case 4:
-        lienzoHSV2[n][1] = saturacion_4;
-        break;
-      case 3:
-        lienzoHSV2[n][1] = saturacion_3;
-        break;
-      case 2:
-        lienzoHSV2[n][1] = saturacion_2;
-        break;
-      case 1:
-        lienzoHSV2[n][1] = saturacion_1;
-        break;
-    }
-
-  }
-
-  //inicio el bucle del efecto
-  while (efectoIdx == 4) {
-    for (int y = 0; y < 20; y++) {
-      for (int x = 0; x < 20; x++) {
-        int l = getBufferIndex(x, y);
-
-        hue = getLienzoH2(x, y);
-        sat = getLienzoS2(x, y);
-        val = getLienzoV2(x, y);
-
-        if (val >= 180) {
-          val = 180;
-        }
-        updatePixel(l, hue, sat, val);
-
-      }
-    }
-    for (int n = 0; n < 400; n++) {
-      int h = lienzoHSV2[n][0];
-      int s = lienzoHSV2[n][1];
-      int v = lienzoHSV2[n][2];
-
-      lienzoHSV2[n][0] = cuentaEfecto3;
-      int Radio = valorRadialLeds[n];
-      switch (Radio) {
-        case 10:
-          lienzoHSV2[n][1] = saturacion_10;
-          break;
-        case 9:
-          lienzoHSV2[n][1] = saturacion_9;
-          break;
-        case 8:
-          lienzoHSV2[n][1] = saturacion_8;
-          break;
-        case 7:
-          lienzoHSV2[n][1] = saturacion_7;
-          break;
-        case 6:
-          lienzoHSV2[n][1] = saturacion_6;
-          break;
-        case 5:
-          lienzoHSV2[n][1] = saturacion_5;
-          break;
-        case 4:
-          lienzoHSV2[n][1] = saturacion_4;
-          break;
-        case 3:
-          lienzoHSV2[n][1] = saturacion_3;
-          break;
-        case 2:
-          lienzoHSV2[n][1] = saturacion_2;
-          break;
-        case 1:
-          lienzoHSV2[n][1] = saturacion_1;
-          break;
-      }
-      if (millis() - tiempoCambioSaturacion > cuantoTiempoCambioSaturacion) { //10
-        if (memoria_saturacion_10 + cantidadManejada > saturacion_10)
-        {
-          saturacion_10 = saturacion_10 + cantidadManejada;
-        }
-        if (memoria_saturacion_9 + cantidadManejada > saturacion_9)
-        {
-          saturacion_9 = saturacion_9 + cantidadManejada;
-        }
-        if (memoria_saturacion_8 + cantidadManejada > saturacion_8)
-        {
-          saturacion_8 = saturacion_8 + cantidadManejada;
-        }
-        if (memoria_saturacion_7 + cantidadManejada > saturacion_7)
-        {
-          saturacion_7 = saturacion_7 + cantidadManejada;
-        }
-        if (memoria_saturacion_6 + cantidadManejada > saturacion_6)
-        {
-          saturacion_6 = saturacion_6 + cantidadManejada;
-        }
-        if (memoria_saturacion_5 + cantidadManejada > saturacion_5)
-        {
-          saturacion_5 = saturacion_5 + cantidadManejada;
-        }
-        if (memoria_saturacion_4 + cantidadManejada > saturacion_4)
-        {
-          saturacion_4 = saturacion_4 + cantidadManejada;
-        }
-        if (memoria_saturacion_3 + cantidadManejada > saturacion_3)
-        {
-          saturacion_3 = saturacion_3 + cantidadManejada;
-        }
-        if (memoria_saturacion_2 + cantidadManejada > saturacion_2)
-        {
-          saturacion_2 = saturacion_2 + cantidadManejada;
-        }
-        if (memoria_saturacion_1 + cantidadManejada > saturacion_1)
-        {
-          saturacion_1 = saturacion_1 + cantidadManejada;
-        }
-        if (memoria_saturacion_10 < saturacion_10)
-        {
-          saturacion_10 = saturacion_10 - cantidadManejada;
-        }
-        if (memoria_saturacion_9 < saturacion_9)
-        {
-          saturacion_9 = saturacion_9 - cantidadManejada;
-        }
-        if (memoria_saturacion_8 < saturacion_8)
-        {
-          saturacion_8 = saturacion_8 - cantidadManejada;
-        }
-        if (memoria_saturacion_7 < saturacion_7)
-        {
-          saturacion_7 = saturacion_7 - cantidadManejada;
-        }
-        if (memoria_saturacion_6 < saturacion_6)
-        {
-          saturacion_6 = saturacion_6 - cantidadManejada;
-        }
-        if (memoria_saturacion_5 < saturacion_5)
-        {
-          saturacion_5 = saturacion_5 - cantidadManejada;
-        }
-        if (memoria_saturacion_4 < saturacion_4)
-        {
-          saturacion_4 = saturacion_4 - cantidadManejada;
-        }
-        if (memoria_saturacion_3 < saturacion_3)
-        {
-          saturacion_3 = saturacion_3 - cantidadManejada;
-        }
-        if (memoria_saturacion_2 < saturacion_2)
-        {
-          saturacion_2 = saturacion_2 - cantidadManejada;
-        }
-        if (memoria_saturacion_1 < saturacion_1)
-        {
-          saturacion_1 = saturacion_1 - cantidadManejada;
-        }
-        tiempoCambioSaturacion = millis();
-      }
-      //se ejecuta una vez cuando la saturacion_actual cambia
-
-    }
-    //sp es la velocidad global
-    delay (sp * 10);
-    serialCheck();
-
-  }
-
-}
-
-
-//LLUVIA
-void efecto5() {
-  //SACAR LO QUE DA MARRON
-  uint8_t hue = 0;
-  int sat = 0;
-  int val = 0;
-  unsigned long effectTimer = millis();
-  int count = 0;
-  borrar();
-  Serial.println("EFECTO 5");
-
-  for (int n = 0; n < 400; n++) {
-    lienzoHSV2[n][0] = lienzoHSV[n][0];
-
-    lienzoHSV2[n][1] = lienzoHSV[n][1];
-
-    lienzoHSV2[n][2] = lienzoHSV[n][2];
-    int Radio = valorRadialLeds[n];
-    switch (Radio) {
-      case 10:
-        lienzoHSV2[n][1] = saturacion_10;
-        lienzoHSV2[n][2] = 250;
-        break;
-    }
-
-  }
-  while (efectoIdx == 5) {
-    for (int y = 0; y < 20; y++) {
-      for (int x = 0; x < 20; x++) {
-        int l = getBufferIndex(x, y);
-
-        hue = getLienzoH2(x, y);
-        sat = getLienzoS2(x, y);
-        val = getLienzoV2(x, y);
-
-        if (val > 180)
-          val = 180;
-        updatePixel(l, hue, sat, val);
-      }
-    }
-
-    //FastLED.show();
-    if (millis() - effectTimer > 10000) { //10000
-      effectTimer = millis();
-      count++;
-      if (count >= 10)
-        count = 0;
-
-      Serial.println(count);
-    }
-    for (int n = 0; n < 400; n++) {
-      int h = lienzoHSV2[n][0];
-      int b = count * 20; //20
-      if (count == 0) {
-        lienzoHSV2[n][0]++;
-      }
-      else if (h < b || h > b + 10)
-        lienzoHSV2[n][0]++;
-    }
-    //sp es la velocidad global
-    delay (sp * 10);
-    serialCheck();
-
-  }
-}
-
-void efecto6() {
-  int pixels = 318;
-  int hue = 30;
-  int sat = 255;
-  int val = 0;
-  int head = 0;
-  while (efectoIdx == 6) {
-    Serial.println("EFECTO 6");
-    borrar();
-    for (int p = 0; p < pixels; p++) {
-      if (efectoIdx != 6)
-        break;
-      val = 255;
-      for (int h = 0; h < 8; h++) {
-
-        int n = p - h;
-        if (n < 0)
-          break;
-        int x = secCuadrado[n][0];
-        int y = secCuadrado[n][1];
-        Serial.println (n);
-        int l = getBufferIndex(x, y);
-        hue = getLienzoH(x, y);
-        sat = getLienzoS(x, y);
-        updatePixel(l, hue, sat, val);
-        val = val - 40;
-        if (val < 0)
-          val = 0;
-
-      }
-      delay (sp * 10);
-      serialCheck();
-
-    }
-  }
-
-}
-
-
-// ESPIRAL CUADRADO
-void efecto99() {
-  int pixels = 155; //318
-  uint8_t hue = 30;
-  uint8_t sat = 255;
-  int val = 0;
-  while (efectoIdx == 6) {
-    Serial.println("EFECTO 6");
-    FastLED.clear();
-    for (int n = 0; n < pixels; n++) {
-      if (efectoIdx != 5)
-        break;
-      int x = secEspiral[n][0];
-      int y = secEspiral[n][1];
-      val = 0;
-      while (val < 255) {
-        int l = getBufferIndex(x, y);
-        hue = getLienzoH(x, y);
-        sat = getLienzoS(x, y);
-        updatePixel(l, hue, sat, val);
-        val += 25;
-        delay (sp);
-        serialCheck();
-
-      }
-    }
-  }
-}
-
-
-// PIXEL RANDOM
-void efecto7() {
-  uint8_t hue, sat, val;
-  uint8_t hueval, centroHue = 0;
-  Serial.println("EFECTO 7");
-  borrar();
-  while (efectoIdx == 7) {
-    centroHue = random(0, 256);
-    for (int n = 0; n < 255; n++) {
-
-      for (int y = 0; y < 20; y++) {
-        for (int x = 0; x < 20; x++) {
-          int l = getBufferIndex(x, y);
-          hue = getLienzoH(x, y);
-          sat = getLienzoS(x, y);
-          val = getLienzoV(x, y);
-
-          if (hue > centroHue - 80 && hueval < centroHue + 80) {
-
-            hue = hue + n;
-
-          }
-
-          updatePixel(l, hue, sat, val);
-        }
-      }
-      delay(sp * 10);
-      serialCheck();
-
-    }
   }
 }
