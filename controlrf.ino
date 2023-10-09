@@ -52,7 +52,7 @@ void IRAM_ATTR leerControl() {
     
     cicloEstado=CICLO_PULSO_ALTO;
     cicloStart=micros();
-    //Serial.println (cicloLen);
+    ////####Serial.println (cicloLen);
     if (cicloLen < 1700 && cicloLen > 1500) {
       
       if (cicloPulsoHigh > 1050 && cicloPulsoHigh < 1500)
@@ -107,15 +107,15 @@ void IRAM_ATTR leerControl() {
         }
 
         
-        //Serial.println (cmd, HEX);
+        ////####Serial.println (cmd, HEX);
       }
      }
-/*     Serial.print (pktData[0], HEX);
-     Serial.print (" ");
-     Serial.print (pktData[1], HEX);
-     Serial.print (":");
-     Serial.print (pktData[2], HEX);
-     Serial.println();*/
+/*     //####Serial.print (pktData[0], HEX);
+     //####Serial.print (" ");
+     //####Serial.print (pktData[1], HEX);
+     //####Serial.print (":");
+     //####Serial.print (pktData[2], HEX);
+     //####Serial.println();*/
      //pktQueue.put(pktData);   
      //nuevoPaquete=true;
      cicloEstado=CICLO_ESPERANDO;
