@@ -15,14 +15,14 @@ void clearFrameBuffer() {
 
 
 void updateLedsTask(void * pvParameters) {
-  //####Serial.print ("STARTING VIDEO TASK ON CORE: ");
-  //####Serial.println (xPortGetCoreID());
+  Serial.print ("STARTING VIDEO TASK ON CORE: ");
+  Serial.println (xPortGetCoreID());
   while (1) {
     updateLeds();
     //delay (1);
   }
 }
-/*
+
 void updateLedsSerial() {
   for (int n=0; n<FRAME_BUFFER_SIZE; n++) {
     int pixelLed=frame2PixelLedMap[n];
@@ -33,15 +33,15 @@ void updateLedsSerial() {
       leds[pixelLed] = CHSV(h,s,v);
       leds[pixelLed+1] = CHSV(h,s,v);
       leds[pixelLed+2] = CHSV(h,s,v);
-      //####Serial.printf ("%d,%d,%d;", leds[pixelLed].r, leds[pixelLed].g, leds[pixelLed].b);
+      Serial.printf ("%d,%d,%d;", leds[pixelLed].r, leds[pixelLed].g, leds[pixelLed].b);
     }
     else
-      //####Serial.print ("0,0,0;");
+      Serial.print ("0,0,0;");
   
   }
-  //####Serial.println();
+  Serial.println();
 }
-*/
+
 
 void updateLeds() {
   for (int n=0; n<FRAME_BUFFER_SIZE; n++) {

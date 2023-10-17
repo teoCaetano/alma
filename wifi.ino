@@ -5,16 +5,16 @@ void initWifi() {
     WiFi.persistent(false);
     //WiFi.disconnect();
     WiFi.mode(WIFI_STA);
-    //####Serial.print ("Modo Client [SSID: JOSAM] ");
+    Serial.print ("Modo Client [SSID: JOSAM] ");
     delay (300);
     WiFi.begin("test", "test");
     delay (1000);
     WiFi.setAutoConnect(true);
-    //####Serial.println (" OK");
+    Serial.println (" OK");
 }
 
 void WiFiStationGotIP(WiFiEvent_t event, WiFiEventInfo_t info) {
-  //####Serial.print("Station connected, IP: ");
-  //####Serial.println(WiFi.localIP());
+  Serial.print("Station connected, IP: ");
+  Serial.println(WiFi.localIP());
  
 }*/

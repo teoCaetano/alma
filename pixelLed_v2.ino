@@ -33,14 +33,11 @@ int newBr = br;
 int sp = 5;
 int globalHue = 0;
 int color = 0;
-int valor_envioCharFlash = 200;
-int tiempoRecepcionDeColor = 10; //segundos
 
 //variables cambio de color
 int cuentaEfecto3 = 0;
 int cuentaEspectro = 0;
 int espectroHueEfecto3 = 220;
-
 enum Colores {
   NINGUNO,
   ROJO,
@@ -67,9 +64,6 @@ bool on_efectoReboteSaturacion = false;
 bool flag_efectoReboteSaturacion = false;
 bool on_efectoSonrisa = false;
 bool flag_timeAfterSerial_efecto3 = false;
-bool on_humanoDetectado = false;
-bool flag_brilloMaximo_humanoDetectado = false;
-bool off_humanoDetectado = false;
 bool off_efectoReboteSaturacion = false;
 bool off_efectoSonrisa = false;
 bool off_efectoColor = false;
@@ -83,13 +77,11 @@ int cuentaEsperaColor = 0;
 bool colorPrecionado = false;
 bool rebotePrecionado = false;
 bool sonrisaPrecionado = false;
-bool humanoPrecionado = false;
 bool enable_serial = true;
 
 
 enum maquinaEstadoEfectos {
   estadoInicial,
-  humanoDetectado,
   estadoColor,
   timerColor,
   estadoRebote,
@@ -327,7 +319,17 @@ void serialCheck() {
       on_efectoSonrisa = true;
     }
     else if (ch == 'o') {
-      humanoPrecionado = true;
+      saturacion_actual = 5;
+      memoria_saturacion_10 = 10;
+      memoria_saturacion_9 = 10;
+      memoria_saturacion_8 = 20;
+      memoria_saturacion_7 = 30;
+      memoria_saturacion_6 = 40;
+      memoria_saturacion_5 = 190;
+      memoria_saturacion_4 = 220;
+      memoria_saturacion_3 = 250;
+      memoria_saturacion_2 = 10;
+      memoria_saturacion_1 = 10;
     }
     else if (ch == 'R') {
       if (enable_serial == true)
