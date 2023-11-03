@@ -189,13 +189,6 @@ void efecto3() {
         off_humanoDetectado = false;
         cuenta_relojMaquinaEstadosEfectos = 0;
       }
-      if ((valor_envioCharFlash == brillop) && (flag_brilloMaximo_humanoDetectado == false))
-      {
-        if (Serial.available())
-        {
-          Serial.println('+');
-        }
-      }
     }
     if (maquina == estadoColor )
     {
@@ -271,12 +264,81 @@ void efecto3() {
       }
       if (cuenta_relojMaquinaEstadosEfectos >= tiempoRecepcionDeColor)
       {
-        maquina = humanoDetectado;
-        if (Serial.available())
-        {
-          Serial.println('-');
-        }
+        maquina = timerColor;
+        int color_random = random(0, 6);
+        switch (color_random) {
+          case 0:
+            colorActual = ROSA;
+            cuentaEfecto3 = HUE_PINK;
+            Serial.println("rosa");
+            cuentaEspectro = 0;
+            contadorSaturacionColores = 0;
+            cantidadColorAumentado = 2;
+            flag_timeAfterSerial_efecto3 = true;
+            maquina = timerColor;
+            break;
+          case 1:
+            colorActual = PURPURA;
+            cuentaEfecto3 = HUE_PURPLE + 10 ;
+            Serial.println("violeta");
+            cuentaEspectro = 0;
+            contadorSaturacionColores = 0;
+            cantidadColorAumentado = 2;
+            flag_timeAfterSerial_efecto3 = true;
+            maquina = timerColor;
+            break;
+          case 2:
+            colorActual = AZUL;
+            cuentaEfecto3 = HUE_BLUE ;
+            Serial.println("azul");
+            cuentaEspectro = 0;
+            contadorSaturacionColores = 0;
+            cantidadColorAumentado = 2;
+            flag_timeAfterSerial_efecto3 = true;
+            maquina = timerColor;
+            break;
+          case 3:
+            colorActual = VERDE;
+            cuentaEfecto3 = HUE_GREEN ;
+            Serial.println("verde");
+            cuentaEspectro = 0;
+            contadorSaturacionColores = 0;
+            flag_timeAfterSerial_efecto3 = true;
+            cantidadColorAumentado = 2;
+            maquina = timerColor;
+            break;
+          case 4:
+            colorActual = AMARILLO;
+            cuentaEfecto3 = HUE_YELLOW ;
+            Serial.println("amarillo");
+            cuentaEspectro = 0;
+            contadorSaturacionColores = 0;
+            flag_timeAfterSerial_efecto3 = true;
+            cantidadColorAumentado = 5;
+            maquina = timerColor;
+            break;
+          case 5:
+            colorActual = NARANJA;
+            cuentaEfecto3 = HUE_ORANGE;
+            Serial.println("naranja");
+            cuentaEspectro = 0;
+            contadorSaturacionColores = 0;
+            flag_timeAfterSerial_efecto3 = true;
+            cantidadColorAumentado = 5;
+            maquina = timerColor;
+            break;
+          case 6:
+            colorActual = ROJO;
+            cuentaEfecto3 = HUE_RED;
+            Serial.println("rojo");
+            cuentaEspectro = 0;
+            contadorSaturacionColores = 0;
+            flag_timeAfterSerial_efecto3 = true;
+            cantidadColorAumentado = 2;
+            maquina = timerColor;
+            break;
 
+        }
       }
       colorAnterior = colorActual;
     }
@@ -294,6 +356,12 @@ void efecto3() {
       {
         off_efectoColor = false;
         maquina = estadoSonrisa;
+        enable_serial = false;
+      }
+      if (humanoPrecionado == true)
+      {
+        off_efectoColor = false;
+        maquina = humanoDetectado;
         enable_serial = false;
       }
       if ((colorPrecionado == true) && (colorActual != colorAnterior))
@@ -324,6 +392,12 @@ void efecto3() {
         maquina = estadoSonrisa;
         enable_serial = false;
       }
+      if (humanoPrecionado == true)
+      {
+        off_efectoReboteSaturacion = false;
+        maquina = humanoDetectado;
+        enable_serial = false;
+      }
     }
     if (maquina == estadoSonrisa)
     {
@@ -344,6 +418,12 @@ void efecto3() {
       {
         off_efectoSonrisa = false;
         maquina = estadoRebote;
+        enable_serial = false;
+      }
+      if (humanoPrecionado == true)
+      {
+        off_efectoSonrisa = false;
+        maquina = humanoDetectado;
         enable_serial = false;
       }
     }
@@ -378,8 +458,6 @@ void efecto3() {
         cuentaEspectro = 0;
       }
       effectTimer = millis();
-      Serial.print("cuenta efecto es:");
-      Serial.println(cuentaEfecto3);
     }
     //--------------------------------------------------------------------------------------------------------------------------------------------------
     /*
@@ -508,8 +586,6 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        Serial.print("frame 12, count:");
-        Serial.println(saturacion_actual);
         break;
       case 11:
         memoria_saturacion_10 = 200;
@@ -522,8 +598,6 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        Serial.print("frame 11, count:");
-        Serial.println(saturacion_actual);
         break;
       case 10:
         memoria_saturacion_10 = 190;
@@ -536,8 +610,6 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        Serial.print("frame 10, count:");
-        Serial.println(saturacion_actual);
         break;
       case 9:
         memoria_saturacion_10 = 160;
@@ -550,8 +622,6 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        Serial.print("frame 9, count:");
-        Serial.println(saturacion_actual);
         break;
       case 8:
         memoria_saturacion_10 = 160;
@@ -564,8 +634,6 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        Serial.print("frame 8, count:");
-        Serial.println(saturacion_actual);
         break;
       case 7:
         memoria_saturacion_10 = 150;
@@ -578,8 +646,6 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        Serial.print("frame 7, count:");
-        Serial.println(saturacion_actual);
         break;
       case 6:
         memoria_saturacion_10 = 130;
@@ -592,8 +658,6 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        Serial.print("frame 6, count:");
-        Serial.println(saturacion_actual);
         break;
       case 5:
         memoria_saturacion_10 = 20;
@@ -606,8 +670,6 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        Serial.print("frame 5, count:");
-        Serial.println(saturacion_actual);
         break;
       case 4:
         memoria_saturacion_10 = 20;
@@ -620,8 +682,6 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        Serial.print("frame 4, count:");
-        Serial.println(saturacion_actual);
         break;
       case 3:
         memoria_saturacion_10 = 20;
@@ -634,8 +694,6 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        Serial.print("frame 3, count:");
-        Serial.println(saturacion_actual);
         break;
         break;
       case 2:
@@ -649,8 +707,6 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        Serial.print("frame 2, count:");
-        Serial.println(saturacion_actual);
         break;
       case 1:
         memoria_saturacion_10 = 20;
@@ -663,14 +719,8 @@ void efecto3() {
         memoria_saturacion_3 = 140;
         memoria_saturacion_2 = 60;
         memoria_saturacion_1 = 0;
-        if (on_efectoReboteSaturacion == true)
-        {
-          Serial.print("frame 1, count:");
-          Serial.println(saturacion_actual);
-        }
         break;
       default:
-        Serial.println("termino el efecto rebote");
         saturacion_actual = 1;
         break;
     }
@@ -750,13 +800,13 @@ void efecto3() {
     delay (sp * 10);
     if (on_humanoDetectado == true)
     {
-      Serial.println("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzavrbaerbaeetbd");
       if (flag_brilloMaximo_humanoDetectado == false)
       {
         brillop = brillop + 10;
       }
       if ((flag_brilloMaximo_humanoDetectado == false) && (brillop >= 240))
       {
+        Serial.println('+');
         flag_brilloMaximo_humanoDetectado = true;
       }
       if (flag_brilloMaximo_humanoDetectado == true)
@@ -817,9 +867,8 @@ void efecto3() {
         on_efectoSonrisa = false;
         bandera_brillo = false;
         off_efectoSonrisa = true;
-        Serial.println("por favorrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
       }
-      
+
     }
     newBr = brillop;
     serialCheck();

@@ -19,7 +19,6 @@
 
 
 
-#include <HTTPClient.h>
 #include <WiFi.h>
 
 #include <FastLED.h>
