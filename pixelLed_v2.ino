@@ -19,7 +19,6 @@
 
 
 
-#include <HTTPClient.h>
 #include <WiFi.h>
 
 #include <FastLED.h>
@@ -34,7 +33,7 @@ int sp = 5;
 int globalHue = 0;
 int color = 0;
 int valor_envioCharFlash = 200;
-int tiempoRecepcionDeColor = 10; //segundos
+int tiempoRecepcionDeColor = 2; //segundos
 
 //variables cambio de color
 int cuentaEfecto3 = 0;
@@ -73,7 +72,7 @@ bool off_humanoDetectado = false;
 bool off_efectoReboteSaturacion = false;
 bool off_efectoSonrisa = false;
 bool off_efectoColor = false;
-
+bool flag_envioCharFlash = false;
 //variables timer efectos
 bool tiempoEsperaEfectos = false;
 int cuentaEsperaEfectos = 0;
@@ -264,14 +263,7 @@ void loop() {
     efecto2();
   else if (efectoIdx == 3)
     efecto3();
-  else if (efectoIdx == 4)
-    efecto4();
-  else if (efectoIdx == 5)
-    efecto5();
-  else if (efectoIdx == 6)
-    efecto6();
-  else if (efectoIdx == 7)
-    efecto7();
+
 
 
 }
